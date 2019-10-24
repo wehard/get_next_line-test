@@ -6,7 +6,7 @@
 /*   By: wkorande <wkorande@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 21:20:13 by wkorande          #+#    #+#             */
-/*   Updated: 2019/10/24 12:03:40 by wkorande         ###   ########.fr       */
+/*   Updated: 2019/10/24 17:06:25 by wkorande         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include "../get_next_line/get_next_line.h"
 
-int		check_closed_fd(int *file, int size)
+int		check_closed_fd(int *done, int size)
 {
 	int i;
 	int all_closed;
@@ -24,27 +24,26 @@ int		check_closed_fd(int *file, int size)
 	i = 1;
 	while (i < size)
 	{
-		all_closed = 0;
-		if (file[i] == -2)
-		{
+		//ft_putnbr(done[i]);
+		if (done[i] == 1)
 			all_closed = 1;
-			//ft_putstr("closing ");
-			//ft_putnbr(i);
-			//ft_putchar('\n');
-		}
+		else
+			all_closed = 0;
 		i++;
 	}
-	return (all_closed);
+	//ft_putnbr(all_closed);
+	//ft_putchar('\n');
+	return (all_closed > 0);
 }
 
 int		main(int argc, char **argv)
 {
 	int		file[argc];
+	int		done[3] = { 0 };
 	char	*line;
 	int		i;
 
 	i = 1;
-	ft_bzero(file, argc);
 	if (argc == 1)
 		file[0] = 0;
 	else
@@ -65,12 +64,13 @@ int		main(int argc, char **argv)
 	}
 	else
 	{
-		i = 1;
+		i = 0;
 		while (1)
 		{
 			if (i == argc)
-				i = 1;
-			if (file[i] != -2 && get_next_line(file[i], &line) == 1)
+				i = 0;
+
+			if (get_next_line(file[i], &line) == 1)
 			{
 				ft_putnbr(i);
 				ft_putstr(": ");
@@ -78,12 +78,9 @@ int		main(int argc, char **argv)
 				free(line);
 			}
 			else
-			{
-				close(file[i]);
-				file[i] = -2;
-			}
-			if (check_closed_fd(file, argc))
-					break ;
+				done[i] = 1;
+			if (check_closed_fd(done, argc))
+				break ;
 			i++;
 
 		}
