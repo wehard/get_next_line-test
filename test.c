@@ -6,7 +6,7 @@
 /*   By: wkorande <wkorande@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 21:20:13 by wkorande          #+#    #+#             */
-/*   Updated: 2019/10/24 17:06:25 by wkorande         ###   ########.fr       */
+/*   Updated: 2019/10/24 17:45:00 by wkorande         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int		check_closed_fd(int *done, int size)
 	int all_closed;
 
 	all_closed = 0;
-	i = 1;
+	i = 0;
 	while (i < size)
 	{
 		//ft_putnbr(done[i]);
@@ -39,10 +39,11 @@ int		check_closed_fd(int *done, int size)
 int		main(int argc, char **argv)
 {
 	int		file[argc];
-	int		done[3] = { 0 };
+	int		done[argc];
 	char	*line;
 	int		i;
 
+	ft_bzero(done, argc);
 	i = 1;
 	if (argc == 1)
 		file[0] = 0;
@@ -64,6 +65,7 @@ int		main(int argc, char **argv)
 	}
 	else
 	{
+		done[0] = 1;
 		i = 0;
 		while (1)
 		{
@@ -78,19 +80,29 @@ int		main(int argc, char **argv)
 				free(line);
 			}
 			else
+			{
 				done[i] = 1;
-			if (check_closed_fd(done, argc))
-				break ;
+				if (check_closed_fd(done, argc))
+					break ;
+			}
 			i++;
 
 		}
 		printf("All done.\n");
 	}
 
+
 	i = 1;
 	if (argc >= 2)
 		while (i < argc)
-			close(file[i++]);
-	//ft_putstr("Press any key");
-	//system("read -n99 -p ' ' key");
+		{
+			close(file[i]);
+			i++;
+		}
+
+	for (int j = 0; j < argc; j++)
+	{
+		ft_putnbr(done[i]);
+		ft_putchar(' ');
+	}
 }
