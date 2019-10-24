@@ -6,7 +6,7 @@
 /*   By: wkorande <wkorande@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 21:20:13 by wkorande          #+#    #+#             */
-/*   Updated: 2019/10/23 19:18:18 by wkorande         ###   ########.fr       */
+/*   Updated: 2019/10/24 12:03:40 by wkorande         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,26 +15,49 @@
 #include <stdio.h>
 #include "../get_next_line/get_next_line.h"
 
+int		check_closed_fd(int *file, int size)
+{
+	int i;
+	int all_closed;
+
+	all_closed = 0;
+	i = 1;
+	while (i < size)
+	{
+		all_closed = 0;
+		if (file[i] == -2)
+		{
+			all_closed = 1;
+			//ft_putstr("closing ");
+			//ft_putnbr(i);
+			//ft_putchar('\n');
+		}
+		i++;
+	}
+	return (all_closed);
+}
+
 int		main(int argc, char **argv)
 {
-	int		fd[argc];
+	int		file[argc];
 	char	*line;
 	int		i;
-	int		closed;
+
 	i = 1;
+	ft_bzero(file, argc);
 	if (argc == 1)
-		fd[0] = 0;
+		file[0] = 0;
 	else
 	{
 		while (i < argc)
 		{
-			fd[i] = open(argv[i], O_RDONLY);
+			file[i] = open(argv[i], O_RDONLY);
 			i++;
 		}
 	}
 	if (argc == 1)
 	{
-		while (get_next_line(fd[0], &line) == 1)
+		while (get_next_line(file[0], &line) == 1)
 		{
 			ft_putendl(line);
 			free(line);
@@ -43,29 +66,34 @@ int		main(int argc, char **argv)
 	else
 	{
 		i = 1;
-		closed = 0;
-		while (i < argc)
+		while (1)
 		{
-			if (get_next_line(fd[i], &line) == 1)
+			if (i == argc)
+				i = 1;
+			if (file[i] != -2 && get_next_line(file[i], &line) == 1)
 			{
+				ft_putnbr(i);
+				ft_putstr(": ");
 				ft_putendl(line);
 				free(line);
-				i++;
-				if (i == argc)
-				i = 1;
-				continue ;
 			}
 			else
 			{
-				break;
+				close(file[i]);
+				file[i] = -2;
 			}
+			if (check_closed_fd(file, argc))
+					break ;
+			i++;
+
 		}
+		printf("All done.\n");
 	}
 
 	i = 1;
 	if (argc >= 2)
-		while (i++ < argc)
-			close(fd[i]);
-	ft_putstr("Press any key");
-	system("read -n1 -p ' ' key");
+		while (i < argc)
+			close(file[i++]);
+	//ft_putstr("Press any key");
+	//system("read -n99 -p ' ' key");
 }
