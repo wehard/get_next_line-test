@@ -6,7 +6,7 @@
 /*   By: wkorande <wkorande@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 21:20:13 by wkorande          #+#    #+#             */
-/*   Updated: 2019/10/24 18:53:51 by wkorande         ###   ########.fr       */
+/*   Updated: 2019/10/25 10:58:32 by wkorande         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,34 +38,48 @@ int		check_closed_fd(int *file, int count)
 int		main(int argc, char **argv)
 {
 	char	*line;
-	int		file[argc];
+	int		fds[argc];
 	int 	done[argc-1];
 	int		i;
 	int 	error;
+	int		fd;
+	int 	lines;
 
+	lines = 0;
 	error = 0;
+
 	if (argc == 1)
+		return (1);
+
+	if (argc == 2)
 	{
-		while ((error = get_next_line(file[0], &line)) == 1)
+		fd = open(argv[1], O_RDONLY);
+		while ((error = get_next_line(fd, &line)) == 1)
 		{
-			ft_putendl(line);
+			ft_putnbr(fd);
+			ft_putstr(": ");
+			ft_putstr(line);
+			ft_putendl("$");
 			free(line);
+			lines++;
 		}
+		close (fd);
+		ft_putstr("\nLines: ");
+		ft_putnbr(lines);
 		return (error);
 	}
 
 	i = 0;
 	while (i < argc)
 	{
-		file[i] = open(argv[i + 1], O_RDONLY);
+		fds[i] = open(argv[i + 1], O_RDONLY);
 		i++;
 	}
-
 
 	i = 0;
 	while (1)
 	{
-		if (done[i] != 1 && (get_next_line(file[i], &line) == 1))
+		if (done[i] != 1 && (get_next_line(fds[i], &line) == 1))
 		{
 			ft_putnbr(i);
 			ft_putstr(": ");
@@ -88,5 +102,5 @@ int		main(int argc, char **argv)
 
 	i = 0;
 		while (i < argc - 1)
-			close(file[i++]);
+			close(fds[i++]);
 }
