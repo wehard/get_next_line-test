@@ -21,10 +21,12 @@ TESTDIR=$(pwd)
 
 # Check author
 if test -f "$GNLDIR/author"; then
-	printf "$NORMAL%s $CYAN%s!\n" "Hello" $(cat $GNLDIR/author)
+	printf "$NORMAL%s $CYAN%s,$NORMAL %s!\n" "Hello" $(cat $GNLDIR/author) "good luck"
 else
 	printf "$RED%s\n" "Error: no author file"
 fi
+
+sleep 2
 
 printf "$GRAY"
 
@@ -48,4 +50,4 @@ rm -f $GNLDIR/compile.sh
 # run test
 ./test_gnl test_null_cases.txt
 
-printf "\n"
+printf "\nExpected: 16\n"

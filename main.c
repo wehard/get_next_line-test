@@ -6,7 +6,7 @@
 /*   By: wkorande <wkorande@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/20 21:20:13 by wkorande          #+#    #+#             */
-/*   Updated: 2019/10/25 10:58:32 by wkorande         ###   ########.fr       */
+/*   Updated: 2019/10/25 11:41:02 by wkorande         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ int		main(int argc, char **argv)
 {
 	char	*line;
 	int		fds[argc];
-	int 	done[argc-1];
 	int		i;
 	int 	error;
 	int		fd;
@@ -70,37 +69,32 @@ int		main(int argc, char **argv)
 	}
 
 	i = 0;
-	while (i < argc)
+	while (i < argc - 1)
 	{
 		fds[i] = open(argv[i + 1], O_RDONLY);
 		i++;
 	}
 
 	i = 0;
-	while (1)
+	while (i < argc - 1)
 	{
-		if (done[i] != 1 && (get_next_line(fds[i], &line) == 1))
+		lines = 0;
+		while (get_next_line(fds[i], &line) == 1)
 		{
-			ft_putnbr(i);
+			ft_putnbr(fds[i]);
 			ft_putstr(": ");
 			ft_putstr(line);
 			ft_putendl("$");
 			free(line);
+			lines++;
 		}
-		else
-		{
-			done[i] = 1;
-			if (check_closed_fd(done, argc))
-				break ;
-		}
+		ft_putstr("\nLines: ");
+		ft_putnbr(lines);
+		ft_putstr("\n\n");
 		i++;
-		if (i == argc - 1)
-			i = 0;
 	}
 	printf("All done.\n");
-
-
 	i = 0;
-		while (i < argc - 1)
-			close(fds[i++]);
+	while (i < argc - 1)
+		close(fds[i++]);
 }
