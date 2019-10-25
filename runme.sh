@@ -49,5 +49,12 @@ rm -f $GNLDIR/compile.sh
 
 # run test
 ./test_gnl test_null_cases.txt
+LINES=$(./test_gnl test_null_cases.txt | grep "Lines" | cut -d ' ' -f 2)
 
 printf "\nExpected: 16\n"
+
+if [ $LINES -eq 16 ]; then
+	printf "$GREEN%s\n" "[OK]"
+else
+	printf "$RED%s\n" "[FAIL]"
+fi
